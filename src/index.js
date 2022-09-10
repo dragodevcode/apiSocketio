@@ -6,6 +6,7 @@
  const app = express()
 
  const activeUsers = new Set();
+ const activeUsersIdUSer = []
 
 
  const server = http.createServer(app)
@@ -17,19 +18,81 @@
 
 
 
+ function deleteUser(idZ){
+
+    console.log("si llego aqui")
+    activeUsersIdUSer.forEach(function(id, index, object) {
+        if(id.id === idZ){
+
+          object.splice(index, 1);
+        }
+    });
+
+    // for (let index = 0; index < activeUsersIdUSer.length; index++) {
+    //     if(id == activeUsersIdUSer[index].id){
+
+
+    //         break
+    //     }
+        
+    // }
+ }
+
+ function validUser(user,idx){
+    let userValud = true
+    activeUsersIdUSer.forEach((datax)=>{
+
+        if(datax.id == idx){
+            if(datax.username == user){
+                userValud = false
+                
+            }
+        }
+    })
+
+    return userValud
+    
+ }
+
+
  io.on("connection", (socket) => {
 
-    console.log("si conecta")
+  
 
     socket.on("conect",(username)=>{
-        console.log(username)
-        socket.userId = username
+        io.sockets.sockets.forEach((dataSock)=>{
+            if(dataSock.id == socket.id){
+
+                if(activeUsersIdUSer.find(usr => usr.id == dataSock.id) === undefined){
+     
+                    activeUsersIdUSer.push({username:username,id:socket.id})
+                }
+            }
+        })
+
         activeUsers.add(username)
     })
 
 
     socket.on('getActive',()=>{
         io.emit("userActive",[...activeUsers])
+    })
+
+
+    socket.on("credit",(datacredit)=>{
+
+        let usernamex = activeUsersIdUSer.find(usr => usr.id == socket.id)
+        if(usernamex != undefined){
+            activeUsersIdUSer.forEach((datac) =>{
+
+                if(datac.username == usernamex.username){
+
+                    io.to(datac.id).emit("updateCredit",{credit:datacredit})
+                }
+                
+            })
+        }
+       
     })
 
 
@@ -42,8 +105,17 @@
     })
     socket.on("disconnect", () => {
 
+
+        console.log(socket.id,'ID')
+        deleteUser(socket.id)
+
+       
+        console.log(activeUsersIdUSer,'QUE PES')
         activeUsers.delete(socket.userId);
+        //activeUsersIdUSer.delete({username:socket.userId,id:socket.id})
         console.log("desconexion",activeUsers)
+
+        //console.log(activeUsersIdUSer)
         socket.broadcast.emit("userActive", [...activeUsers]);
       });
 
