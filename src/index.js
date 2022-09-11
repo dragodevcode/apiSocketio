@@ -70,6 +70,7 @@
             }
         })
 
+        socket.userId = username
         activeUsers.add(username)
     })
 
@@ -106,11 +107,11 @@
     socket.on("disconnect", () => {
 
 
-        console.log(socket.id,'ID')
+        //console.log(socket.id,'ID')
         deleteUser(socket.id)
 
        
-        console.log(activeUsersIdUSer,'QUE PES')
+        //console.log(activeUsersIdUSer,'QUE PES')
         activeUsers.delete(socket.userId);
         //activeUsersIdUSer.delete({username:socket.userId,id:socket.id})
         console.log("desconexion",activeUsers)
@@ -122,5 +123,5 @@
 
   });
 
- server.listen(3400)
- console.log("server on port",3400)
+ server.listen(8087)
+ console.log("server on port",8087)
