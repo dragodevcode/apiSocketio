@@ -79,6 +79,13 @@
         io.emit("userActive",[...activeUsers])
     })
 
+    
+    socket.on("send_msj",(data)=>{
+        
+
+        socket.broadcast.emit('recive_msj',{msj:data})
+    })
+
 
     socket.on("credit",(datacredit)=>{
 
