@@ -12,7 +12,7 @@
  const server = http.createServer(app)
  const io = new WebSocketServer(server,{
     cors: {
-        origin: "http://localhost:4200"
+        origin: "*"
       }
  })
 
